@@ -1,5 +1,5 @@
 const express=require('express');
-const Model =require('../model/model');
+const Model =require('../models/model');
 const route=express.Router();
 
 route.post('/save',async (req,res)=>{
