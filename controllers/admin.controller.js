@@ -4,11 +4,12 @@ const adminService = require('../services/admin.service');
 
 // routes
 router.post('/authenticate', authenticate);
+router.post('/changePassword', changePassword);
 router.post('/register', register);
 router.get('/', getAll);
 router.get('/current', getCurrent);
 router.get('/:id', getById);
-router.put('/:id', update);
+router.put('/update', update);
 router.delete('/:id', _delete);
 
 
@@ -20,9 +21,15 @@ function authenticate(req, res, next) {
         .catch(err => next(err));
 }
 
+function changePassword(req, res, next) {
+    adminService.changePassword(req.body)
+        .then(admin => res.json(admin))
+        .catch(err => next(err));
+}
+
 function register(req, res, next) {
     adminService.create(req.body)
-        .then((res) => res.json({res}))
+        .then((admin) => res.json(admin))
         .catch(err => next(err));
 }
 
@@ -45,8 +52,8 @@ function getById(req, res, next) {
 }
 
 function update(req, res, next) {
-    adminService.update(req.params.id, req.body)
-        .then(() => res.json({}))
+    adminService.update(req.body)
+        .then((admin) => res.json(admin))
         .catch(err => next(err));
 }
 

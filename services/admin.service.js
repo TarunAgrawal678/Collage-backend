@@ -6,6 +6,7 @@ const Admin = db.Admin;
 
 module.exports = {
     authenticate,
+    changePassword,
     getAll,
     getById,
     create,
@@ -21,6 +22,23 @@ async function authenticate({username,password}){
             data:{...admin.toJSON()},
             token
         };
+    }
+}
+
+async function changePassword(adminParam){
+    const admin= await Admin.findOne({username:adminParam.username});
+    if(admin){
+        if(bcrypt.compareSync(adminParam.password,admin.hash)){
+            if (adminParam.newPassword) {
+                admin.hash = bcrypt.hashSync(adminParam.newPassword, 10);
+            }
+            await admin.save()
+            return {message:'Password changed successfully.'};
+        }else{
+            throw 'Password does not matched.';
+        }
+    }else{
+        throw 'User not found.';
     }
 }
 
@@ -47,29 +65,21 @@ async function create(adminParam){
 
     // save user
     if(await admin.save()){
-        throw 'User saved successfully';
+        return {message:'User saved successfully'};
     }
 
 }
 
-async function update(id, adminParam) {
-    const admin = await Admin.findById(id);
-
+async function update(adminParam) {
+    const admin = await Admin.findOne({username:adminParam.username});
     // validate
     if (!admin) throw 'User not found';
-    if (admin.username !== adminParam.username && await Admin.findOne({ username: adminParam.username })) {
-        throw 'Username "' + adminParam.username + '" is already taken';
-    }
-
-    // hash password if it was entered
-    if (adminParam.password) {
-        adminParam.hash = bcrypt.hashSync(adminParam.password, 10);
-    }
-
     // copy adminParam properties to admin
     Object.assign(admin, adminParam);
+    if(await admin.save()){
+        return {message:'User updated successfully'};
+    }
 
-    await Admin.save();
 }
 
 async function _delete(id) {
