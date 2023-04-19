@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const db = require('../helpers/db.js');
 const config = require('config.json');
-const Admin = db.Admin;
+const { Admin, validate } = require('../models/admin.model');
 
 module.exports = {
     authenticate,
@@ -51,6 +51,10 @@ async function getById(id){
 }
 
 async function create(adminParam){
+    const { error } = validate(adminParam);
+    if (error) {
+        throw error.details[0].message
+    };
     // validate
     if (await Admin.findOne({ username: adminParam.username })) {
         throw 'Username "' + adminParam.username + '" is already taken';
