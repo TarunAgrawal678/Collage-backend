@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const adminService = require('../services/admin.service');
+const emailService = require('../services/email.service');
 
 // routes
 router.post('/authenticate', authenticate);
 router.post('/changePassword', changePassword);
 router.post('/register', register);
+router.post('/verify', verifyEmail);
 router.get('/', getAll);
 router.get('/current', getCurrent);
 router.get('/:id', getById);
@@ -30,6 +32,12 @@ function changePassword(req, res, next) {
 function register(req, res, next) {
     adminService.create(req.body)
         .then((admin) => res.json(admin))
+        .catch(err => next(err));
+}
+
+function verifyEmail(req, res, next) {
+    adminService.authenticate(req.body)
+        .then(admin => admin ? res.json(admin) : res.status(400).json({ message: 'Username or password is incorrect' }))
         .catch(err => next(err));
 }
 

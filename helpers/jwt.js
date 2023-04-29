@@ -8,6 +8,7 @@ function jwtToken() {
         path: [
             // public routes that don't require authentication
             '/admins/authenticate',
+            '/forget-password/email/otp'
         ]
     });
 }

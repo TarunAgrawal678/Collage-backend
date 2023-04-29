@@ -5,6 +5,12 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const jwt = require('helpers/jwt');
 const errorHandler = require('helpers/error-handler');
+const path = require('path');
+const helmet = require('helmet');
+const logger = require('morgan');
+
+// Using Helmet
+app.use(helmet())
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -15,6 +21,7 @@ app.use(jwt());
 
 // api routes
 app.use('/admins', require('./controllers/admin.controller'));
+app.use('/forget-password', require('./controllers/forgetPassword.controller'));
 
 // global error handler
 app.use(errorHandler);
